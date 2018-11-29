@@ -1,5 +1,7 @@
 package ru.tinkoff.fintech.qa;
-import java.util.Calendar;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class MainPojo {
     private String name;
@@ -7,7 +9,7 @@ public class MainPojo {
     private String patronymic;
     private int age;
     private String gender;
-    private Calendar dob;
+    private String dob;
     private Long itn;
     private int postcode;
     private String country;
@@ -20,7 +22,8 @@ public class MainPojo {
     public MainPojo() {
     }
 
-    public MainPojo(String name, String surname, String patronymic, int age, String gender, Calendar dob, Long itn, int postcode, String country, String region, String city, String street, int house, int apartment) {
+    public MainPojo(String name, String surname, String patronymic,
+                    int age, String gender, String dob, Long itn, int postcode, String country, String region, String city, String street, int house, int apartment) {
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;
@@ -69,6 +72,10 @@ public class MainPojo {
         this.age = age;
     }
 
+    void setAge(String age){
+        this.age = ageFromBirthday(age);
+    }
+
     String getGender() {
         return gender;
     }
@@ -77,11 +84,11 @@ public class MainPojo {
         this.gender = gender;
     }
 
-    Calendar getDob() {
+    String getDob() {
         return dob;
     }
 
-    void setDob(Calendar dob) {
+    void setDob(String dob) {
         this.dob = dob;
     }
 
@@ -147,6 +154,38 @@ public class MainPojo {
 
     void setApartment(int apartment) {
         this.apartment = apartment;
+    }
+
+    private int ageFromBirthday(String birthday) {
+        // 3 февраля 1977 -> today - 3 февраля 1977
+        String[] listOfBirthday = birthday.split(" ");
+        Integer day = Integer.parseInt(listOfBirthday[0]);
+        Integer year = Integer.parseInt(listOfBirthday[2]);
+        Integer month = monthsFromString(listOfBirthday[1]);
+        Date dob = new Date(year - 1900, month, day);
+        return (getDateDiff(new Date(),dob,TimeUnit.DAYS)/365) ;
+    }
+
+    private int monthsFromString(String month){
+        switch (month) {
+            case "января" : return 1;
+            case "февраля" : return 2;
+            case "марта" : return 3;
+            case "апреля" : return 4;
+            case "мая" : return 5;
+            case "июня" : return 6;
+            case "июля" : return 7;
+            case "августа" : return 8;
+            case "сентября" : return 9;
+            case "октября" : return 10;
+            case "ноября" : return 11;
+            case "декабря" : return 12;
+        }
+        return -1;
+    }
+    private static int getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
+        long diffInMillies = date1.getTime() - date2.getTime();
+        return (int)timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS);
     }
 }
 

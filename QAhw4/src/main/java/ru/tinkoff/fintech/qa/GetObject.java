@@ -7,54 +7,57 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
-import static ru.tinkoff.fintech.qa.CreateSheet.*;
 
 public class GetObject {
-    public static void getObject(List<MainPojo> data, int size) throws UnirestException {
-        Unirest.setObjectMapper(new ObjectMapper() {
-            private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
-                    = new com.fasterxml.jackson.databind.ObjectMapper();
+    private final static ObjectMapper objectMapper = new ObjectMapper() {
+        private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
+                = new com.fasterxml.jackson.databind.ObjectMapper();
 
-            public <T> T readValue(String value, Class<T> valueType) {
-                try {
-                    return jacksonObjectMapper.readValue(value, valueType);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+        public <T> T readValue(String value, Class<T> valueType) {
+            try {
+                return jacksonObjectMapper.readValue(value, valueType);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+        }
 
-            public String writeValue(Object value) {
-                try {
-                    return jacksonObjectMapper.writeValueAsString(value);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
+        public String writeValue(Object value) {
+            try {
+                return jacksonObjectMapper.writeValueAsString(value);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
             }
-        });
+        }
+    };
 
+    public static List<MainPojo> getObject(int size) throws UnirestException {
+        Unirest.setObjectMapper(objectMapper);
+        ArrayList<MainPojo> data = new ArrayList<>();
         for (int i = 0; i < size; ++i) {
             HttpResponse<JsonPojo> response =
                     Unirest.get("https://randus.org/api.php").asObject(JsonPojo.class);
             JsonPojo jdata = response.getBody();
-
-            data.get(i).setName(jdata.getLname());
-            data.get(i).setSurname(jdata.getFname());
-            data.get(i).setPatronymic(jdata.getPatronymic());
-            data.get(i).setGender(jdata.getGender());
-            data.get(i).setPostcode(parseInt(jdata.getPostcode()));
-            data.get(i).setCity(jdata.getCity());
-            data.get(i).setStreet(jdata.getStreet());
-            data.get(i).setHouse(jdata.getHouse());
-            data.get(i).setAge(jdata.getApartment());
-
-            write_country(data.get(i));
-            write_region(data.get(i));
-            write_itn(data.get(i));
-            write_dob(data.get(i));
-            write_age(data.get(i));
+            MainPojo pojo = new MainPojo();
+            pojo.setName(jdata.getLname());
+            pojo.setSurname(jdata.getFname());
+            pojo.setPatronymic(jdata.getPatronymic());
+            pojo.setGender(jdata.getGender());
+            pojo.setPostcode(parseInt(jdata.getPostcode()));
+            pojo.setCity(jdata.getCity());
+            pojo.setStreet(jdata.getStreet());
+            pojo.setHouse(jdata.getHouse());
+            pojo.setApartment(jdata.getApartment());
+            pojo.setDob(jdata.getDate());
+            pojo.setAge(jdata.getDate());
+            pojo.setRegion(FileDataProvider.readRegion());
+            pojo.setCountry(FileDataProvider.readCountry());
+            pojo.setItn(FileDataProvider.readItn());
+            data.add(pojo);
         }
+        return data;
     }
 }

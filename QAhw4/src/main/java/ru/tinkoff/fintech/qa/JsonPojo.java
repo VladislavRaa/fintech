@@ -1,20 +1,22 @@
 package ru.tinkoff.fintech.qa;
 public class JsonPojo {
-    private final String lname;
-    private final String fname;
-    private final String patronymic;
-    private final String gender;
-    private final String date;
-    private final String postcode;
-    private final String city;
-    private final String street;
-    private final int house;
-    private final int apartment;
-    private final String phone;
-    private final String login;
-    private final String password;
-    private final String color;
-    private final String userpic;
+    private  String lname;
+    private  String fname;
+    private  String patronymic;
+    private  String gender;
+    private  String date;
+    private  String postcode;
+    private  String city;
+    private  String street;
+    private  int house;
+    private  int apartment;
+    private  String phone;
+    private  String login;
+    private  String password;
+    private  String color;
+    private  String userpic;
+
+    public JsonPojo(){}
 
     public JsonPojo(String lname, String fname, String patronymic, String gender, String date, String postcode, String city, String street, int house, int apartment, String phone, String login, String password, String color, String userpic) {
         this.lname = lname;

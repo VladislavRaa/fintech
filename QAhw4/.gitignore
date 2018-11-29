@@ -1,0 +1,7 @@
+dea/
+*.iml
+.*
+!/.gitignore
+target/
+log.txt
+.xls
